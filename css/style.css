@@ -1,4 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  background: #12121f url("../assets/poster.jpg") center/cover no-repeat fixed;
+}
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: transparent; min-height: 100vh; }
 
 /* 动态背景视频 */
