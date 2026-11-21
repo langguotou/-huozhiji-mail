@@ -4,7 +4,39 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>霍志鸡邮箱</title>
+<script>
+// 微信内置浏览器(X5)不支持 background-attachment:fixed 且禁止视频自动播放
+// 检测到微信时：改用静态封面图铺满背景，并隐藏视频，避免黑屏/背景不显示
+(function () {
+  if (navigator.userAgent.toLowerCase().indexOf('micromessenger') === -1) return;
+  document.documentElement.classList.add('is-wechat');
+  document.documentElement.style.background =
+    '#12121f url("assets/poster.jpg") center center / cover no-repeat scroll';
+  document.addEventListener('DOMContentLoaded', function () {
+    var v = document.querySelector('.bg-video');
+    if (v) v.style.display = 'none';
+  });
+})();
+</script>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* 悬浮音乐按钮 */
+.music-btn {
+  position: fixed; right: 14px; bottom: 20px; z-index: 150;
+  width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,.6);
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e);
+  background-size: 300% 300%; animation: rainbowShift 6s ease infinite, musicPulse 1.6s ease-in-out infinite;
+  box-shadow: 0 0 18px rgba(255,90,180,.7); color: #fff; font-size: 24px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.music-btn .note { display: inline-block; line-height: 1; }
+.music-btn.playing .note { animation: noteSpin 3s linear infinite; }
+@keyframes noteSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes musicPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@media (min-width: 768px) { .music-btn { right: 28px; bottom: 28px; width: 58px; height: 58px; font-size: 27px; } }
+@media (prefers-reduced-motion: reduce) { .music-btn, .music-btn .note { animation: none !important; } }
+</style>
 </head>
 <body>
 
@@ -14,6 +46,10 @@
 </video>
 <div class="bg-overlay" aria-hidden="true"></div>
 <div class="sparkles" aria-hidden="true"></div>
+
+<!-- 背景音乐 -->
+<audio id="bgMusic" src="assets/music.mp3" loop preload="auto"></audio>
+<button class="music-btn" id="musicBtn" title="播放音乐" aria-label="播放背景音乐"><span class="note">🎵</span></button>
 
 <!-- 顶栏 -->
 <div class="header">
@@ -106,5 +142,64 @@
 </div>
 
 <script src="js/app.js"></script>
+<script>
+// 背景音乐控制：打开即自动播放，并在多个时机反复尝试；按钮可暂停/恢复
+(function () {
+  var audio = document.getElementById('bgMusic');
+  var btn = document.getElementById('musicBtn');
+  var note = btn.querySelector('.note');
+  var wantPlay = true; // 默认自动播放
+
+  function render() {
+    var playing = !audio.paused;
+    btn.classList.toggle('playing', playing);
+    note.textContent = playing ? '🎶' : '🎵';
+    btn.title = playing ? '暂停音乐' : '播放音乐';
+  }
+  function tryPlay() {
+    if (!wantPlay) return;
+    var p = audio.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (audio.paused) { wantPlay = true; tryPlay(); }
+    else { wantPlay = false; audio.pause(); }
+    render();
+  });
+  audio.addEventListener('play', render);
+  audio.addEventListener('pause', render);
+
+  // 页面加载即尝试自动播放
+  audio.addEventListener('canplay', tryPlay);
+  window.addEventListener('load', tryPlay);
+  tryPlay();
+
+  // 微信内置浏览器需等 WeixinJSBridge 就绪后播放
+  function wxReady() { tryPlay(); }
+  if (window.WeixinJSBridge) {
+    WeixinJSBridge.invoke('getNetworkType', {}, wxReady);
+  } else {
+    document.addEventListener('WeixinJSBridgeReady', wxReady, false);
+  }
+
+  // 页面从后台切回时，若仍希望播放则继续（满足各浏览器自动播放策略）
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) tryPlay();
+  });
+
+  // 兜底：若自动播放被拦截，用户任意点击/触摸后仍会开始
+  function onGesture() {
+    if (wantPlay && audio.paused) tryPlay();
+    document.removeEventListener('click', onGesture);
+    document.removeEventListener('touchstart', onGesture);
+  }
+  document.addEventListener('click', onGesture);
+  document.addEventListener('touchstart', onGesture);
+
+  render();
+})();
+</script>
 </body>
 </html>

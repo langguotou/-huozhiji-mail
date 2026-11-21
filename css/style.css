@@ -1,8 +1,14 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html {
-  background: #12121f url("../assets/poster.jpg") center/cover no-repeat fixed;
+  background: #12121f url("../assets/poster.jpg") center/cover no-repeat;
 }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: transparent; min-height: 100vh; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: transparent; min-height: 100vh;
+  position: relative;
+}
+/* 微信内置浏览器：视频无法自动播放，隐藏视频只显示静态封面背景 */
+.is-wechat .bg-video { display: none !important; }
 
 /* 动态背景视频 */
 .bg-video {
@@ -173,16 +179,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 /* 弹窗 */
 .modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
-  background: rgba(0,0,0,.5); align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,.5); align-items: center; justify-content: center;
+  padding: 20px;
 }
 .modal-overlay.active { display: flex; }
 .modal {
   width: 100%; max-width: 500px; max-height: 85vh; background: rgba(255,255,255,.97);
   border: 1px solid rgba(255,255,255,.9); box-shadow: 0 0 30px rgba(255,90,180,.55);
-  border-radius: 20px 20px 0 0; overflow: hidden; display: flex;
-  flex-direction: column; animation: slideUp .25s ease;
+  border-radius: 16px; overflow: hidden; display: flex;
+  flex-direction: column; animation: popIn .25s ease;
 }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes popIn { from { transform: translateY(16px) scale(.96); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 .modal-header {
   padding: 16px; border-bottom: 1px solid #eee;
   display: flex; align-items: flex-start; gap: 12px;
