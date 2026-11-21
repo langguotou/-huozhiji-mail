@@ -1,0 +1,339 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: transparent; min-height: 100vh; }
+
+/* 动态背景视频 */
+.bg-video {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: -2; pointer-events: none;
+}
+.bg-overlay {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: rgba(12, 14, 28, 0.38);
+}
+.sparkles {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .85;
+  background-image:
+    radial-gradient(circle at 12% 24%, rgba(255,255,255,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 16%, rgba(255,190,255,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 34% 72%, rgba(180,240,255,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 64%, rgba(255,240,160,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 56% 38%, rgba(255,255,255,.9) 0 1px, transparent 2px);
+  background-size: 280px 280px, 340px 340px, 400px 400px, 320px 320px, 460px 460px;
+  animation: sparkleFloat 9s linear infinite, twinkle 2.4s ease-in-out infinite;
+}
+@keyframes sparkleFloat { from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; } to { background-position: 280px 280px, -340px 340px, 400px -400px, -320px -320px, 460px 460px; } }
+@keyframes twinkle { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes rainbowShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255,90,180,.45); } 50% { box-shadow: 0 0 22px rgba(90,200,255,.7); } }
+
+/* 顶栏 */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 56px; display: flex; align-items: center;
+  background: linear-gradient(90deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e);
+  background-size: 300% 300%; animation: rainbowShift 8s ease infinite;
+  box-shadow: 0 0 18px rgba(255,90,180,.5);
+  padding: 0 12px; color: #fff;
+}
+.menu-btn {
+  width: 40px; height: 40px; border: none; background: transparent;
+  cursor: pointer; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; gap: 5px; padding: 8px;
+}
+.menu-btn span {
+  display: block; width: 22px; height: 2px; background: #fff;
+  border-radius: 2px; transition: .2s;
+}
+.header-title { flex: 1; text-align: center; font-size: 18px; font-weight: 800; white-space: nowrap; }
+.title-text {
+  background: linear-gradient(90deg, #fff, #ffe066, #ff6bb5, #a06bff, #4cc9f0, #06d6a0, #fff);
+  background-size: 300% 300%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: rainbowShift 5s linear infinite, titleGlow 1.3s ease-in-out infinite alternate;
+}
+.title-emoji {
+  -webkit-text-fill-color: initial; color: initial;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,.9)) drop-shadow(0 0 8px rgba(255,120,220,.8));
+  animation: emojiGlow 1.3s ease-in-out infinite alternate;
+}
+@keyframes titleGlow {
+  from { filter: drop-shadow(0 0 3px rgba(255,255,255,.75)) drop-shadow(0 0 7px rgba(255,110,200,.5)); }
+  to   { filter: drop-shadow(0 0 9px rgba(255,255,255,1)) drop-shadow(0 0 18px rgba(120,220,255,.95)); }
+}
+@keyframes emojiGlow {
+  from { transform: scale(1); filter: drop-shadow(0 0 3px rgba(255,255,255,.7)); }
+  to   { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(255,120,220,1)); }
+}
+.header-right { width: 40px; }
+
+/* 邮箱区 */
+.email-section {
+  margin-top: 56px; padding: 20px 16px 12px;
+  background: linear-gradient(135deg, rgba(255,77,109,.88), rgba(6,214,160,.82), rgba(76,201,240,.85), rgba(181,23,158,.88));
+  background-size: 300% 300%; animation: rainbowShift 10s ease infinite;
+  box-shadow: 0 0 24px rgba(255,140,220,.35);
+  color: #fff;
+}
+.email-label { font-size: 13px; opacity: .75; margin-bottom: 8px; }
+
+/* 前缀输入框 */
+.prefix-input-box {
+  display: flex; gap: 8px; margin-bottom: 12px;
+}
+.prefix-input-box input {
+  flex: 1; min-width: 0; padding: 12px 14px; border: none; border-radius: 12px;
+  background: rgba(255,255,255,.15); color: #fff; font-size: 15px;
+  outline: none; transition: .2s;
+}
+.prefix-input-box input::placeholder { color: rgba(255,255,255,.5); }
+.prefix-input-box input:focus { background: rgba(255,255,255,.25); box-shadow: 0 0 0 2px rgba(255,255,255,.85), 0 0 14px rgba(255,90,180,.8); }
+.generate-btn {
+  flex-shrink: 0; padding: 12px 16px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e); background-size: 200% 200%; animation: rainbowShift 6s ease infinite; box-shadow: 0 0 12px rgba(255,90,180,.6); color: #fff; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: .2s; white-space: nowrap;
+}
+.generate-btn:active:not(:disabled) { transform: scale(.96); }
+.generate-btn:disabled { opacity: .6; cursor: default; }
+
+/* 错误提示 */
+.error-msg {
+  display: none; margin-top: 10px; padding: 10px 14px; border-radius: 10px;
+  background: rgba(231,76,60,.9); color: #fff; font-size: 13px; line-height: 1.4;
+}
+.error-msg.show { display: block; }
+
+.email-box {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.15); border-radius: 12px;
+  padding: 12px 16px; backdrop-filter: blur(6px);
+}
+.email-text {
+  flex: 1; font-size: 15px; font-family: "Courier New", monospace;
+  word-break: break-all; line-height: 1.4;
+}
+.copy-btn {
+  flex-shrink: 0; padding: 6px 14px; border: none; border-radius: 8px;
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e); background-size: 200% 200%; animation: rainbowShift 6s ease infinite; box-shadow: 0 0 12px rgba(255,90,180,.6); color: #fff; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: .2s;
+}
+.copy-btn:disabled { background: rgba(255,255,255,.2); color: rgba(255,255,255,.5); cursor: default; }
+.copy-btn:active:not(:disabled) { transform: scale(.95); }
+
+.email-actions { margin-top: 10px; }
+.save-btn {
+  width: 100%; padding: 12px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e); background-size: 200% 200%; animation: rainbowShift 6s ease infinite; box-shadow: 0 0 12px rgba(255,90,180,.6); color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: .2s;
+}
+.save-btn:disabled { background: rgba(255,255,255,.15); color: rgba(255,255,255,.5); cursor: default; }
+.save-btn:active:not(:disabled) { transform: scale(.98); }
+
+.email-hint { font-size: 12px; opacity: .6; margin-top: 8px; padding-left: 4px; }
+
+/* 邮件区 */
+.mail-section { padding: 16px; background: rgba(18,18,38,.22); border: 1px solid rgba(255,255,255,.35); border-radius: 16px; box-shadow: 0 0 24px rgba(120,180,255,.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.mail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.mail-title { font-size: 16px; font-weight: 600; color: #fff; text-shadow: 0 0 8px rgba(0,0,0,.6); }
+.refresh-btn {
+  padding: 6px 14px; border: 1px solid rgba(255,255,255,.6); border-radius: 8px;
+  background: rgba(255,255,255,.15); color: #fff; font-size: 13px; cursor: pointer;
+  transition: .2s; backdrop-filter: blur(6px);
+}
+.refresh-btn:active { background: rgba(255,255,255,.3); color: #fff; }
+
+/* 邮件列表 */
+.mail-list { display: flex; flex-direction: column; gap: 10px; }
+
+.empty-state {
+  text-align: center; padding: 60px 20px; color: rgba(255,255,255,.75);
+}
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-sub { font-size: 13px; margin-top: 6px; }
+
+.mail-item {
+  background: rgba(255,255,255,.14); border-radius: 12px; padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.12), 0 0 12px rgba(180,140,255,.25); cursor: pointer;
+  transition: .15s; border: 1px solid rgba(255,255,255,.2); border-left: 4px solid #ff6bb5;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.mail-item:active { transform: scale(.98); background: rgba(255,255,255,.24); }
+.mail-item.unread { border-left-color: #ff4d6d; }
+.mail-from { font-size: 14px; font-weight: 600; color: #fff; text-shadow: 0 0 6px rgba(0,0,0,.5); margin-bottom: 4px; }
+.mail-subject { font-size: 13px; color: rgba(255,255,255,.88); margin-bottom: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-date { font-size: 11px; color: rgba(255,255,255,.65); }
+
+/* 弹窗 */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.5); align-items: flex-end; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  width: 100%; max-width: 500px; max-height: 85vh; background: rgba(255,255,255,.97);
+  border: 1px solid rgba(255,255,255,.9); box-shadow: 0 0 30px rgba(255,90,180,.55);
+  border-radius: 20px 20px 0 0; overflow: hidden; display: flex;
+  flex-direction: column; animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-header {
+  padding: 16px; border-bottom: 1px solid #eee;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.modal-subject { flex: 1; font-size: 15px; font-weight: 600; color: #1a1a2e; line-height: 1.4; }
+.modal-close {
+  flex-shrink: 0; width: 32px; height: 32px; border: none; border-radius: 50%;
+  background: #f0f0f0; font-size: 16px; cursor: pointer; color: #666;
+}
+.modal-meta {
+  padding: 12px 16px; border-bottom: 1px solid #f0f0f0;
+  font-size: 12px; color: #666; display: flex; flex-direction: column; gap: 4px;
+}
+.modal-body {
+  padding: 16px; overflow-y: auto; flex: 1; font-size: 14px; line-height: 1.7; color: #333;
+}
+.modal-body a { color: #b5179e; }
+
+/* loading */
+.loading-row {
+  text-align: center; padding: 40px; color: #aaa; font-size: 14px;
+}
+
+/* ============ 顶栏右侧发件按钮 ============ */
+.ad-btn {
+  width: 40px; height: 40px; border: none; background: transparent;
+  cursor: pointer; font-size: 20px; color: #fff; border-radius: 50%;
+  transition: .2s;
+}
+.compose-btn:active { background: rgba(255,255,255,.2); transform: scale(.92); }
+
+/* ============ 侧边栏（邮箱池） ============ */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 300;
+  width: 78%; max-width: 320px; background: #fff;
+  transform: translateX(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+  box-shadow: 2px 0 16px rgba(0,0,0,.15);
+}
+.sidebar.open { transform: translateX(0); }
+.sidebar-header {
+  height: 56px; color: #fff; flex-shrink: 0;
+  background: linear-gradient(90deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e);
+  background-size: 300% 300%; animation: rainbowShift 8s ease infinite;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; font-size: 17px; font-weight: 600;
+}
+.sidebar-close {
+  width: 32px; height: 32px; border: none; border-radius: 50%;
+  background: rgba(255,255,255,.15); color: #fff; font-size: 15px; cursor: pointer;
+}
+.sidebar-actions { padding: 12px 16px; flex-shrink: 0; }
+.new-mail-btn {
+  width: 100%; padding: 12px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e); background-size: 200% 200%; animation: rainbowShift 6s ease infinite; box-shadow: 0 0 12px rgba(255,90,180,.6); color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: .2s;
+}
+.new-mail-btn:active { transform: scale(.98); }
+.mailbox-list {
+  flex: 1; overflow-y: auto; padding: 0 12px 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mailbox-empty {
+  text-align: center; color: #aaa; font-size: 13px; padding: 40px 16px; line-height: 1.6;
+}
+.mailbox-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 12px; background: #f5f6fa;
+  cursor: pointer; transition: .15s; border: 2px solid transparent;
+}
+.mailbox-item:active { background: #eceef5; }
+.mailbox-item.active { border-color: #ff4d6d; background: #fff0f5; box-shadow: 0 0 12px rgba(255,77,109,.35); }
+.mailbox-info { flex: 1; min-width: 0; }
+.mailbox-addr {
+  font-size: 13px; font-family: "Courier New", monospace; color: #1a1a2e;
+  word-break: break-all; line-height: 1.3;
+}
+.mailbox-tag { font-size: 11px; color: #ff4d6d; margin-top: 2px; }
+.mailbox-del {
+  flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 8px;
+  background: rgba(231,76,60,.12); color: #e74c3c; font-size: 14px; cursor: pointer;
+  transition: .15s;
+}
+.mailbox-del:active { background: rgba(231,76,60,.3); }
+.sidebar-footer {
+  flex-shrink: 0; padding: 12px 16px; border-top: 1px solid #eee;
+}
+.fullscreen-btn {
+  width: 100%; padding: 11px; border: 1px solid #ddd; border-radius: 12px;
+  background: #fff; color: #555; font-size: 14px; cursor: pointer; transition: .2s;
+}
+.fullscreen-btn:active { background: #f0f0f0; }
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; z-index: 299;
+  background: rgba(0,0,0,.45);
+}
+.sidebar-overlay.show { display: block; }
+
+/* ============ 发件弹窗 ============ */
+.compose-modal { max-height: 90vh; }
+.compose-form {
+  padding: 16px; overflow-y: auto; flex: 1;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 600; color: #555; }
+.form-group input, .form-group textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px;
+  font-size: 14px; font-family: inherit; outline: none; transition: .2s;
+  resize: vertical; color: #1a1a2e;
+}
+.form-group input:focus, .form-group textarea:focus {
+  border-color: #ff4d6d; box-shadow: 0 0 0 3px rgba(255,77,109,.2);
+}
+.compose-actions { display: flex; gap: 10px; margin-top: 4px; }
+.send-cancel-btn {
+  flex: 1; padding: 13px; border: 1px solid #ddd; border-radius: 12px;
+  background: #fff; color: #666; font-size: 15px; cursor: pointer;
+}
+.send-btn {
+  flex: 2; padding: 13px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #ff4d6d, #ffb703, #06d6a0, #4cc9f0, #b5179e); background-size: 200% 200%; animation: rainbowShift 6s ease infinite; box-shadow: 0 0 12px rgba(255,90,180,.6); color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: .2s;
+}
+.send-btn:active:not(:disabled) { transform: scale(.98); }
+.send-btn:disabled { opacity: .6; cursor: default; }
+
+/* 发件弹窗提示 */
+.form-note {
+  padding: 10px 12px; border-radius: 10px; background: #fff8e1;
+  color: #8a6d3b; font-size: 12px; line-height: 1.5;
+}
+
+/* ============ 响应式：手机 / 平板 / 电脑 ============ */
+@media (min-width: 768px) {
+  .header { height: 64px; padding: 0 24px; }
+  .header-title { font-size: 20px; }
+  .email-section, .mail-section {
+    max-width: 760px; margin-left: auto; margin-right: auto;
+    border-radius: 16px;
+  }
+  .email-section { margin-top: 88px; margin-bottom: 16px; padding: 24px 28px 20px; }
+  .mail-section { padding: 24px 28px; margin-bottom: 40px; }
+  .modal-overlay { align-items: center; }
+  .modal { max-width: 560px; border-radius: 16px; }
+  .sidebar { width: 320px; max-width: 320px; }
+}
+
+@media (min-width: 1200px) {
+  .email-section, .mail-section { max-width: 900px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sparkles, .header, .email-section, .generate-btn, .copy-btn,
+  .save-btn, .new-mail-btn, .send-btn, .sidebar-header,
+  .title-text, .title-emoji { animation: none !important; }
+}
