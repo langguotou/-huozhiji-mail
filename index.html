@@ -48,7 +48,7 @@
 <div class="sparkles" aria-hidden="true"></div>
 
 <!-- 背景音乐 -->
-<audio id="bgMusic" src="assets/music.mp3" loop preload="auto"></audio>
+<audio id="bgMusic" src="assets/music.mp3" loop autoplay preload="auto"></audio>
 <button class="music-btn" id="musicBtn" title="播放音乐" aria-label="播放背景音乐"><span class="note">🎵</span></button>
 
 <!-- 顶栏 -->
@@ -171,10 +171,15 @@
   audio.addEventListener('play', render);
   audio.addEventListener('pause', render);
 
-  // 页面加载即尝试自动播放
+  // 页面加载即尝试自动播放，并在前几秒密集重试（应对部分浏览器延迟放行）
   audio.addEventListener('canplay', tryPlay);
   window.addEventListener('load', tryPlay);
   tryPlay();
+  var retries = 0;
+  var retryTimer = setInterval(function () {
+    if (!audio.paused || !wantPlay || ++retries > 20) { clearInterval(retryTimer); return; }
+    tryPlay();
+  }, 300);
 
   // 微信内置浏览器需等 WeixinJSBridge 就绪后播放
   function wxReady() { tryPlay(); }
